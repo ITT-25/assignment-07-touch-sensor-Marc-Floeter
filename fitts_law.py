@@ -114,6 +114,7 @@ def handle_movement(data):
     fitts.on_move(data['x'], data['y'])
 
 def handle_tap(is_tapping):
+    print(is_tapping)
     fitts.on_click(is_tapping)
 
 sensor.register_callback('movement', handle_movement)
