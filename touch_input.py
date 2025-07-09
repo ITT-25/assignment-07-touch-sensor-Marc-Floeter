@@ -15,6 +15,7 @@ BOUNDING_BOX_COLOR = (0, 255, 0) # Farbe der Bounding Box Außenlinie
 BOUNDING_BOX_THICKNESS = 2 # Dicke der Bounding Box Außenlinie
 
 ## Texteingabe
+TEXT_INPUT = True # Text Input aktivieren/deaktivieren
 SHOW_PATH = True # Anzeige des Touch-Pfads eines Zeichens auf dem Kamerabild
 GUI_LINE_THICKNESS = 4 # Dicke des Pfads auf dem Kamerabild
 GUI_LINE_COLOR = (255, 0, 0) # Farbe des Pfads auf dem Kamerabild
@@ -43,7 +44,7 @@ PATH_IMG_MARGIN = 2 # Rand um das Zeichen im Auswertungsbild
 ## Prediction
 MIN_PATH_BB_SIZE = 1 # Minimale Größe eines Eingabezeichens, um zur Auswertung zugelassen zu werden
 MIN_PREDICTION_CONFIDENCE = 0.8 # Minimale Prediction Confidence des Modells, um als valide Eingabe betrachtet zu werden
-LABEL_NAMES = [] # Liste der Namen der eingebbaren Zeichen
+LABEL_NAMES = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'] # Liste der Namen der eingebbaren Zeichen
 
 # Fitt's Law Kompatibiltät (DIPPID)
 FITTS_LAW_WINDOW_SIZE = 800
@@ -195,7 +196,7 @@ def detect_touch(cap, threshold):
             touching = False
 
         # Falls kein Touch erkannt und Input Timeout überschritten -> Starte Auswertung der Touch-Texteingabe
-        if not touching and strokes and (time.time() - last_touch_time > INPUT_TIMEOUT):
+        if not touching and strokes and (time.time() - last_touch_time > INPUT_TIMEOUT) and TEXT_INPUT:
             print("Buchstabe abgeschlossen, rendere alle Strokes...")
             strokes_img = render_strokes_image(strokes, PATH_IMG_SIZE, PATH_IMG_SIZE) # Generiere Bild aus Strichen
 
@@ -239,7 +240,7 @@ def detect_touch(cap, threshold):
             if touch_bb and SHOW_BOUNDING_BOX:
                 cv2.rectangle(display_frame, (bb_x, bb_y), (bb_x + bb_width, bb_y + bb_height), BOUNDING_BOX_COLOR, BOUNDING_BOX_THICKNESS)
 
-            if SHOW_PATH:
+            if TEXT_INPUT and SHOW_PATH:
                 # Bisher gezeichnete Striche zeichnen
                 for stroke in strokes:
                     if len(stroke) > 1:

@@ -6,7 +6,7 @@ Marc Flöter, Universität Regensburg, Interaktionstechniken und -technologien (
 
 Im Rahmen dieser Abgabe wurde ein kamerabasiertes Touch-Interface entwickelt, das Finger- bzw. Stylusbewegungen und Taps über eine von unten gefilmte Plexiglas-Oberfläche optisch erkennt, die zur Diffusion mit einem Blatt Papier belegt ist.
 Bewegung und Taps werden auf die Dimensionen und das Koordinatensystem der mitgelieferten Fitt's Law Anwendung gemapped und als DIPPID-Events an diese versendet.
-Zusätzlich wurde das System um die Funktionalität zur handschriftlichen Texteingabe erweitert. Zeichenweise Eingaben werden dabei durch ein auf den mitgelieferten NIST-Datensatz selbsttrainiertes CNN-Modell erkannt, und mit `pynput` auf Tasteneingaben des erkannten Zeichens gemapped.
+Zusätzlich wurde das System um die Funktionalität zur handschriftlichen Texteingabe (englisches Alphabet (groß und klein) und Zahlen) erweitert. Zeichenweise Eingaben werden dabei durch ein auf den mitgelieferten NIST-Datensatz selbsttrainiertes CNN-Modell erkannt, und mit `pynput` auf Tasteneingaben des erkannten Zeichens gemapped.
 
 
 ## Benutzung
@@ -41,7 +41,7 @@ Beim Start, noch bevor etwas angezeigt wird, erfolgt eine automatische Kalibrier
 - Eine Berührung auf der Touch-Oberfläche innerhalb des von der Kamera erfassten Bereiches wird als Bewegung erkannt.
 - Eine kurze Berührung (Schwellwert einstellbar als "MAX_TAP_DURATION", default auf 0,2s) wird zusätzlich als "Tap" registriert.
 - Bewegungen und ggf. Infos über Taps werden per DIPPID verschickt und können durch eine parallel laufende Fitt's Law Anwendung zur Steuerung verarbeitet werden.
-- Handschriftliche Zeichen (z. B. Buchstaben) werden durch längeres Schreiben mit Finger oder Stylus eingegeben.
+- Handschriftliche Zeichen (englisches Alphabet (groß und klein) und Zahlen) werden durch längeres Schreiben mit Finger oder Stylus eingegeben.
 - Nach einer kurzen Pause (Schwellwert einstellbar als "INPUT_TIMEOUT") wird das geschriebene Zeichen (sofern im Datensatz vorhanden gewesen) automatisch erkannt und als Tastatureingabe simuliert.
 - `q` beendet das Programm.
 
@@ -62,6 +62,7 @@ Durch die Anpassung einiger Konstanten am Anfang des Codes können Einstellungen
 - VIDEO_ID (Geräte-ID der Kamera)
 
 #### Touch-Erkennung
+- TEXT_INPUT (Text Input aktivieren/deaktivieren)
 - MAX_TAP_DURATION (Maximale Dauer eines Touchs (in s), um noch als Tap erkannt zu werden (alles darüber = nur Bewegung))
 - MIN_TOUCH_SIZE (Minimale Größe eines zu erkennenden Fingers)
 - MAX_TOUCH_SIZE (Maximale Größe eines zu erkennenden Fingers)
@@ -102,9 +103,10 @@ Durch die Anpassung einiger Konstanten am Anfang des Codes können Einstellungen
 ### 4. Modellwahl & Training
 
 - Für die Handschrifterkennung wurde ein eigenes Convolutional Neural Network (CNN) trainiert.
-- Als Trainingsdaten wurden ausschließlich die zur Kurseinheit mitgelieferten Daten aus dem Subset des NIST-Datensatzes verwendet.
+- Als Trainingsdaten wurden ausschließlich die zur Kurseinheit mitgelieferten Daten aus dem Subset des NIST-Datensatzes verwendet. Demnach sind die eingebbaren Zeichen auf das englische Alphabet (groß und klein) und Zahlen beschränkt (34906 Bilder).
 - Die Architektur und der Trainingsprozess (Ergänzungen in hwr_datasets.ipynb) orientieren sich an früheren Übungen und der Erfahrung daraus (Assignment 5).
-- Das Modell wurde im `.keras`-Format gespeichert und wird in `touch_input.py` geladen.
+- Nach 19 Epochen (ca. 1,5h) Training erreichte das Modell eine Accuracy von 0.8554
+- Das Modell wurde als `text_recognition.keras` gespeichert und wird in `touch_input.py` geladen.
 - PS: Theoretisch kam eine Zeichenerkennung á la "$1 Recognizer" in Frage, wurde aber aufgrund der riesigen Menge an Vergleichsbildern aus Effizienzgründen ausgeschlossen.
 
 
@@ -126,4 +128,5 @@ Als Trainingsdatensatz wurde das zu dieser Kurseinheit mitgelieferte Subset des 
 
 - Bei sehr schwachem Licht kann die Kalibrierung fehlschlagen, da nicht mehr garantiert werden kann, dass Hintergrund und Finger/Stylus einen ausreichend großen Helligkeitsunterschied aufweisen.
 - Die Erkennung basiert dem Verhältnis von Helligkeit/Dunkelheit eines Schattens und der eingestellten Fingergröße. Das variiert stark und ist daher fehleranfällig bzw. muss genau eingestellt werden.
+- Aufgrund des limitierten Datensatzes können nur Basic-Zeichen (englisches Alphabet (groß und klein) und Zahlen) erkannt werden. Umlaute und Sonderzeichen wären jedoch hilfreich.
 - Das CNN-Modell erkennt aktuell nur einzelne Zeichen, keine Wörter oder Sätze.
