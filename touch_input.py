@@ -1,4 +1,4 @@
-import cv2, time, socket, json
+import cv2, time, socket, json, keras
 import numpy as np
 from PIL import Image, ImageDraw
 from pynput.keyboard import Controller, Key
@@ -43,6 +43,8 @@ FITTS_LAW_WINDOW_SIZE = 800
 
 MIN_PREDICTION_CONFIDENCE = 0.8
 
+LABEL_NAMES = []
+
 # DIPPID Kommunikation
 IP = '127.0.0.1'
 PORT = 5700
@@ -51,6 +53,7 @@ frame_height = None
 frame_width = None
 
 keyboard = Controller()
+model = keras.models.load_model("text_recognition.keras")
 
 # KAMERABILD AUSLESEN ##################################################################################
 
@@ -133,15 +136,26 @@ def detect_touch(cap, threshold):
             print("Buchstabe abgeschlossen, rendere alle Strokes...")
             strokes_img = render_strokes_image(strokes, PATH_IMG_SIZE, PATH_IMG_SIZE)
             if strokes_img is not None:
-                # Preprocess strokes_img
-                # Predict strokes_img
-                prediction = 'A'
-                confidence = 0.85
-                if confidence >= MIN_PREDICTION_CONFIDENCE: 
-                    trigger_keypress(prediction)
-                else:
-                    print(f"Confidence der Prediction unter Schwellwert von {MIN_PREDICTION_CONFIDENCE}")
+                preprocessed_strokes_img = preprocess_strokes_image_for_prediction(strokes_img)
 
+                prediction = model.predict(preprocessed_strokes_img)
+                predicted_index = np.argmax(prediction)
+                confidence = np.max(prediction)
+
+                if 0 <= predicted_index < len(LABEL_NAMES):
+                    predicted_label = LABEL_NAMES[predicted_index]
+                
+                    print(f"Vorhergesagtes Label: {predicted_label}")
+                    print(f"Label-Index: {predicted_index}")
+                    print(f"Confidence: {confidence:.2f}")
+
+                    if confidence >= MIN_PREDICTION_CONFIDENCE: 
+                        trigger_keypress(predicted_label)
+                    else:
+                        print(f"Confidence der Prediction unter Schwellwert von {MIN_PREDICTION_CONFIDENCE}")
+                else:
+                    print("Ungültiger Index der Prediction")
+                    
                 if SHOW_PATH_IMG and strokes_img is not None:
                     cv2.imshow("Strokes Image", strokes_img)
                     
@@ -204,6 +218,13 @@ def preprocess_frame(frame):
     blurred_frame = cv2.GaussianBlur(gray_frame, (5, 5), 0)
 
     return blurred_frame
+
+
+def preprocess_strokes_image_for_prediction(img):
+    img_normalized = img.astype('float32') / 255.0  # Normalisieren
+    img_reshaped = img_normalized.reshape(1, PATH_IMG_SIZE, PATH_IMG_SIZE, 1)
+
+    return img_reshaped
 
 
 def render_strokes_image(strokes, width, height):
