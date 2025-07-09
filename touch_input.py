@@ -53,7 +53,7 @@ frame_height = None
 frame_width = None
 
 keyboard = Controller()
-model = keras.models.load_model("text_recognition.keras")
+model = keras.models.load_model("./cnn_model/text_recognition.keras")
 
 # KAMERABILD AUSLESEN ##################################################################################
 
