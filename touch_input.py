@@ -43,7 +43,7 @@ PATH_IMG_MARGIN = 2 # Rand um das Zeichen im Auswertungsbild
 
 ## Prediction
 MIN_PATH_BB_SIZE = 1 # Minimale Größe eines Eingabezeichens, um zur Auswertung zugelassen zu werden
-MIN_PREDICTION_CONFIDENCE = 0.8 # Minimale Prediction Confidence des Modells, um als valide Eingabe betrachtet zu werden
+MIN_PREDICTION_CONFIDENCE = 0.5 # Minimale Prediction Confidence des Modells, um als valide Eingabe betrachtet zu werden
 LABEL_NAMES = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'] # Liste der Namen der eingebbaren Zeichen
 
 # Fitt's Law Kompatibiltät (DIPPID)
