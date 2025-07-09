@@ -49,8 +49,25 @@ Beim Start, noch bevor etwas angezeigt wird, erfolgt eine automatische Kalibrier
 
 Durch die Anpassung einiger Konstanten am Anfang des Codes können Einstellungen für die Benutzung der Anwendung gemacht werden.
 
-- 
+#### GUI
+- SHOW_CAM (Kamera anzeigen)
+- SHOW_PREPROCESSED (Preprocessed Frame statt Originalbild der Kamera anzeigen)
+- SHOW_BOUNDING_BOX (Bounding Box um Finger/Stylus anzeigen)
+- SHOW_PATH (Anzeige des Touch-Pfads eines Zeichens auf dem Kamerabild)
+- GUI_LINE_THICKNESS (Dicke des Pfads auf dem Kamerabild)
+- GUI_LINE_COLOR (Farbe des Pfads auf dem Kamerabild)
+- SHOW_PATH_IMG (Anzeige des preprocessed Auswertungsbilds, eher als Debug gedacht)
 
+#### Kamera
+- VIDEO_ID (Geräte-ID der Kamera)
+
+#### Touch-Erkennung
+- MAX_TAP_DURATION (Maximale Dauer eines Touchs (in s), um noch als Tap erkannt zu werden (alles darüber = nur Bewegung))
+- MIN_TOUCH_SIZE (Minimale Größe eines zu erkennenden Fingers)
+- MAX_TOUCH_SIZE (Maximale Größe eines zu erkennenden Fingers)
+
+#### Texterkennung
+- INPUT_TIMEOUT (Minimale Dauer der Pause nach einem Touch-Input, bis die Auswertung startet)
 
 
 ## Designentscheidungen und Funktionsweise
@@ -95,8 +112,8 @@ Durch die Anpassung einiger Konstanten am Anfang des Codes können Einstellungen
 
 - `cv2` (OpenCV): Kamerazugriff, Bildverarbeitung
 - `numpy`: Array-Verarbeitung
-- `Pillow`: Zeichnen der Zeichen-Pfade
-- `keras`: Laden des CNN-Modells
+- `Pillow`: Zeichnen der Zeichen-Pfade zur Auswertung
+- `keras`: Laden (und Trainieren) des CNN-Modells
 - `pynput`: Simuliert Tastatureingaben
 - `DIPPID`: Kommunikation mit dem Fitts’ Law Tool
 
